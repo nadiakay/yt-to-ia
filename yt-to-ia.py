@@ -4,7 +4,7 @@ Custom script. Upload YouTube videos to the Internet Archive.
 
 Usage: python3 yt-to-ia.py <youtube_URL>
 
-Uploads youtube video to archive.org, along with metadata including creator, date, and description. Leaves a downloaded copy of the video along with a json file of metadata in the working directory.
+Uploads youtube video to archive.org, along with metadata including creator, date, and description. Leaves a downloaded copy of the video along with a json file of metadata in ./.output/ in the working directory.
 """
 
 import json
@@ -16,12 +16,12 @@ MY_ACCESS_KEY = "v5SsdIdwUq8VAWL5"
 MY_SECRET_KEY = "sXvuqvKZH6TvOBmb"
 URL = sys.argv[1]
 
-ydl_opts = {}
+ydl_opts = {'paths': {'home': '.output/'}}
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 	info = ydl.extract_info(URL, download=True)
 	print("download to local complete: ", info["title"])
 
-with open(info["title"] + ".json", "w", encoding="utf-8") as f:
+with open(".output/" + info["id"] + ".json", "w", encoding="utf-8") as f:
 	f.write(json.dumps(ydl.sanitize_info(info)))
 
 filepath = info["requested_downloads"][0]["filepath"]
