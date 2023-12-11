@@ -31,12 +31,14 @@ def uploadURL(url):
 	filepath = info["requested_downloads"][0]["filepath"]
 	date = info["upload_date"]
 	subjects = [info["uploader"], "YouTube"]
+	date = "-".join([date[:4], date[4:6], date[6:8]])
+	description = "Youtube URL: " + url + "\nUploader: " + info["uploader"] + "\nUpload date: " + date + "\nYouTube description:" + "\n\n" + info["description"]
 	try:
 		subjects.extend(sys.argv[2:])
 	except IndexError:
 		print('no subjects appended. continuing...')
 	
-	md = {'collection': 'opensource_movies', 'mediatype': 'movies', 'title': info["title"], 'creator': info["uploader"], 'description': url + "\n\n" + info["description"], 'date': "-".join([date[:4], date[4:6], date[6:8]]), 'subject': subjects}
+	md = {'collection': 'opensource_movies', 'mediatype': 'movies', 'title': info["title"], 'creator': info["uploader"], 'description': description, 'date': date, 'subject': subjects}
 	print("metadata:", md)
 	sent = False
 	upload_id = info["id"]
