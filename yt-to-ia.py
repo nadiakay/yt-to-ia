@@ -80,7 +80,7 @@ def fetchMedia(url):
 def uploadMedia(info):
 	MY_ACCESS_KEY = "v5SsdIdwUq8VAWL5"
 	MY_SECRET_KEY = "sXvuqvKZH6TvOBmb"
-	MAX_RQS = 0 #fix
+	MAX_RQS = 2
 	
 	sent = False
 	attempts = 0
