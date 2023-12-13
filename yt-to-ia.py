@@ -6,7 +6,7 @@ Usage: yt-to-ia.py <url> [subjects ...] [-h] [-d DATE] [-c CREATOR] [-a] [-t] [-
 
 See -h or --help for options.
 
-Uploads youtube video or audio to archive.org, along with metadata including creator, date, and description, as well as any subjects entered as args. Leaves a downloaded copy of the audio/video (optionally along with a json of metadata) in ./.output/ in the working directory.
+Uploads youtube video or audio to archive.org, along with metadata including creator, date, and description, as well as any subjects entered as args. Leaves a downloaded copy of the audio/video (optionally along with a json of metadata) in ./.output/ in the working directory. If uploading an audio track a thumbnail will be uploaded as well.
 
 Known issues:
 -if an audio file is requested after a video from the same url or vice versa, the new file will overwrite the previous
@@ -18,10 +18,11 @@ import os
 import requests
 import string
 import sys
-from random import choice
-from requests import exceptions
 import yt_dlp
 from internetarchive import upload
+from PIL import Image
+from random import choice
+from requests import exceptions
 
 parser = argparse.ArgumentParser()
 
@@ -35,6 +36,21 @@ parser.add_argument("subjects", nargs='*', help="add subjects to internet archiv
 
 args = parser.parse_args()
 
+def fetchThumbnail(thumburl):
+	thumb = requests.get(thumburl).content
+	fn = thumburl.split('/')[-2] + '_' + thumburl.split('/')[-1].split('?')[0]
+	print('fn',fn)
+	with open(".output/" + fn, 'wb') as f:
+		f.write(thumb)
+		fp = os.path.realpath(f.name)
+	if fn.split('.')[1] == 'webp':
+		im = Image.open(".output/" + fn).convert("RGB")
+		fn = fn.split('.')[0] + ".jpg"
+		print('converting to',fn)
+		im.save('.output/' + fn,"jpeg")
+		fp = os.path.realpath('.output/' + fn)
+	return fp
+
 def fetchMedia(url):
 	ydl_opts = {'paths': {'home': '.output/'}}
 	collection = 'opensource_movies'
@@ -43,7 +59,7 @@ def fetchMedia(url):
 		ydl_opts = {'paths': {'home': '.output/'}, 'format': 'bestaudio', 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}]}
 		collection = 'opensource_audio'
 		mediatype = 'audio'
-	if args.test:
+	elif args.test:
 		collection = 'test_collection'
 	
 	with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -56,13 +72,8 @@ def fetchMedia(url):
 
 	files = [info["requested_downloads"][0]["filepath"]]
 	if args.audio:
-		thumb = requests.get(info["thumbnail"]).content
-		thumbfp = info["id"] + '_' + info['thumbnail'].split('/')[-1].split('?')[0]
-		print('thumb', thumbfp)
-		with open(".output/" + thumbfp, 'wb') as f:
-			f.write(thumb)
-			thumbfp = os.path.realpath(f.name)
-		files.append(thumbfp)	
+		thumbfp = fetchThumbnail(info["thumbnail"])
+		files.append(thumbfp)
 	print('files', files)
 
 	subjects = ["YouTube"]
@@ -99,7 +110,7 @@ def uploadMedia(info):
 					info['id'] = ''.join(choice(string.digits) for _ in range(4)) + '_' + info['id']
 					print('Retrying with new identifier...')
 			elif err.response.status_code == 503:
-			#todo: try this only once; update metadata to add video description after getting 200 res
+			# todo: try this only once; update metadata to add video description after getting 200 res
 				info['md'].update({'description': url})
 				print('metadata:', info['md'])
 				if attempts < MAX_RQS:
