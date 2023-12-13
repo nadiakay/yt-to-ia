@@ -5,7 +5,7 @@ Usage: python3 yt-to-ia.py <youtube_URL> <subjects ...> [-d DATE] [-c CREATOR] [
 
 Options:
 
--d	--date		Specify a date published other than YouTube upload date
+-d	--date		Specify a date published other than YouTube upload date. Format <yyyy-mm-dd>
 -c	--creator	Specify creator other than YouTube uploader
 -a	--audio		Extract and upload audio along with thumbnail; default uploads video
 -t	--test		Upload to the test collection for temporary files
