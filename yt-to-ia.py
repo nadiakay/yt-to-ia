@@ -89,8 +89,8 @@ def fetchMedia(url):
 	return media_info
 	
 def uploadMedia(info):
-	MY_ACCESS_KEY = "v5SsdIdwUq8VAWL5"
-	MY_SECRET_KEY = "sXvuqvKZH6TvOBmb"
+	MY_ACCESS_KEY = ""
+	MY_SECRET_KEY = ""
 	MAX_RQS = 2
 	
 	sent = False
