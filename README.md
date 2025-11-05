@@ -1,5 +1,5 @@
 # yt-to-ia
-Custom script. Upload YouTube videos to the Internet Archive.
+Upload YouTube videos to the Internet Archive.
 
 Usage: python3 yt-to-ia.py <youtube_URL> <subjects ...> [-d DATE] [-c CREATOR] [-a] [-t] [-i]
 
