@@ -1,4 +1,6 @@
 # yt-to-ia
+(this package is not maintained)
+
 Upload YouTube videos to the Internet Archive.
 
 Usage: python3 yt-to-ia.py <youtube_URL> <subjects ...> [-d DATE] [-c CREATOR] [-a] [-t] [-i]
